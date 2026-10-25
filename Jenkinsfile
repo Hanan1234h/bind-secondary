@@ -11,6 +11,12 @@ pipeline {
         sh 'podman build -t $IMAGE:$BUILD_NUMBER .' 
       }
     }
+    stage('CVE Scan') {
+      steps {
+        sh 'podman save -o image.tar $IMAGE:$BUILD_NUMBER'
+        sh 'trivy image --input image.tar --severity HIGH,CRITICAL --exit-code 1'
+      }
+    }
     stage('Push') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'registry-login',
