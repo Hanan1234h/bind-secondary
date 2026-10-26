@@ -13,6 +13,7 @@ pipeline {
     }
     stage('CVE Scan') {
       steps {
+        sh 'rm -f image.tar'
         sh 'podman save -o image.tar $IMAGE:$BUILD_NUMBER'
         sh 'trivy image --input image.tar --severity HIGH,CRITICAL --exit-code 1'
       }
